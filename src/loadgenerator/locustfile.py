@@ -197,7 +197,7 @@ class AllTasks(SequentialTaskSet):
             with self.client.post("/deposit",
                                   data=transaction,
                                   catch_response=True) as response:
-                if "failed" in response.url:
+                if response.url is None or "failed" in response.url:
                     response.failure("deposit failed")
 
         @task(2)
@@ -224,8 +224,9 @@ class AllTasks(SequentialTaskSet):
             fails if not logged in
             exits AuthenticatedTasks
             """
-            self.client.post("/logout")
-            self.parent.username = None
+            with self.client.post("/logout",catch_response=True) as response:
+                response.cookies.clear()
+                self.parent.username = None
             self.client.close()
             # go to UnauthenticatedTasks
             self.interrupt()
