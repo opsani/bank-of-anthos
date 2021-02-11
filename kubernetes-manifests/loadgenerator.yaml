@@ -19,7 +19,7 @@ spec:
   selector:
     matchLabels:
       app: loadgenerator
-  replicas: 1
+  replicas: 2
   template:
     metadata:
       labels:
@@ -38,13 +38,13 @@ spec:
         - name: FRONTEND_ADDR
           value: "frontend:80"
         - name: STEP_SEC
-          value: "300"
+          value: "60"
         - name: USER_SCALE
-          value: "250"
+          value: "120"
         - name: SPAWN_RATE
           value: "50"
         - name: MIN_USERS
-          value: "50"
+          value: "10"
         - name: LOG_LEVEL
           value: "info"
         resources:

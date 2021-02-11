@@ -32,7 +32,7 @@ MASTER_PASSWORD = "password"
 
 STEP_SEC = int(os.getenv('STEP_SEC', 60))
 MIN_USERS = int(os.getenv('MIN_USERS', 50))
-SPAWN_RATE = int(os.getenv('SPAWN_RATE', 50))
+SPAWN_RATE = float(os.getenv('SPAWN_RATE', 50))
 USER_SCALE = int(os.getenv('USER_SCALE', 180))
 TRANSACTION_ACCT_LIST = [str(randint(1111100000, 1111199999))
                          for _ in range(int(USER_SCALE+MIN_USERS))]
@@ -254,7 +254,7 @@ class StagesShape(LoadTestShape):
     def tick(self):
         run_time = self.get_run_time()
 
-        tick_data = (int((math.sin((math.pi/STEP_SEC)*(run_time/STEP_SEC))+1)/2
-                         * USER_SCALE+MIN_USERS), SPAWN_RATE)
+        tick_data = (math.floor(((math.sin(math.pi/STEP_SEC*math.floor(run_time/STEP_SEC)))+1)/2
+              * USER_SCALE)+MIN_USERS, SPAWN_RATE)
         return tick_data
 
