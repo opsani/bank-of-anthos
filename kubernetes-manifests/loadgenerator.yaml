@@ -42,9 +42,9 @@ spec:
         - name: NUM_STEPS
           value: "24"
         - name: STEP_SEC
-          value: "120"
+          value: "600"
         - name: USER_SCALE
-          value: "60"
+          value: "30"
         - name: SPAWN_RATE
           value: "10"
         - name: MIN_USERS
@@ -53,7 +53,7 @@ spec:
           value: "info"
         resources:
           requests:
-            cpu: 100m
+            cpu: 250m
             memory: 512Mi
           limits:
             cpu: 500m
