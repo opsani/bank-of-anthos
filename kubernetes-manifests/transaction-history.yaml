@@ -22,6 +22,7 @@ spec:
       app: transactionhistory
   template:
     metadata:
+      name: transactionhistory
       labels:
         app: transactionhistory
     spec:
@@ -29,11 +30,22 @@ spec:
       terminationGracePeriodSeconds: 5
       containers:
       - name: transactionhistory
+        command: ["java", -javaagent:/appdynamics/javaagent.jar, "-cp", "/app/resources:/app/classes:/app/libs/*", "anthos.samples.bankofanthos.transactionhistory.TransactionHistoryApplication" ]
+      - name: transactionhistory
         image: gcr.io/bank-of-anthos/transactionhistory:v0.4.1
         volumeMounts:
         - name: publickey
           mountPath: "/root/.ssh"
           readOnly: true
+        - mountPath: /hostroot
+          name: hostroot
+          readOnly: true
+        - mountPath: /var/run/docker.sock
+          name: docker-sock
+        - mountPath: /project
+          name: project
+        - mountPath: /appdynamics
+          name: appdynamics
         env:
         - name: VERSION
           value: "v0.4.1"
@@ -64,9 +76,37 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: metadata.namespace
+        - name: APPDYNAMICS_AGENT_ACCOUNT_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              key: accesskey
+              name: mysecret
+        - name: APPDYNAMICS_AGENT_ACCOUNT_NAME
+          valueFrom:
+            secretKeyRef:
+              key: accountname
+              name: mysecret
+        - name: ROLE
+          value: transactionhistory
+        - name: APPDYNAMICS_AGENT_NODE_NAME
+          value: Transactionhistory
+        - name: APPDYNAMICS_AGENT_TIER_NAME
+          value: Transactionhistory-Service
+        - name: APPD_ANALYTICS_MONITOR
+          value: "true"
+        - name: APPD_DOCKER_VISIBILITY
+          value: "true"
+        - name: MACHINE_AGENT_PROPERTIES
+          value: "-Dappdynamics.sim.enabled=true -Dappdynamics.docker.enabled=true"
+        - name: APPDYNAMICS_NETVIZ_AGENT_HOST
+          valueFrom:
+            fieldRef:
+              fieldPath: status.hostIP
         envFrom:
         - configMapRef:
             name: environment-config
+        - configMapRef:
+            name: env-map
         # add ledger-db credentials from ConfigMap
         - configMapRef:
             name: ledger-db-config
@@ -98,6 +138,33 @@ spec:
           items:
           - key: jwtRS256.key.pub
             path: publickey
+      - name: hostroot
+        hostPath:
+          path: /
+          type: Directory
+      - name: docker-sock
+        hostPath:
+          path: /var/run/docker.sock
+          type: Socket
+      - name: project
+      - name: appdynamics
+        emptyDir: {}
+      - name: appd-env-script
+        configMap:
+          name: appd-env-script
+          defaultMode: 511
+      initContainers:
+        - image: docker.io/appdynamics/java-agent:20.3.0
+          name: appd-java-agent
+          command:
+            - cp
+            - -ra
+            - /opt/appdynamics/.
+            - /appdynamics/java-agent
+          volumeMounts:
+            - mountPath: /appdynamics/java-agent
+              name: appdynamics
+
 ---
 apiVersion: v1
 kind: Service
