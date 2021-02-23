@@ -4,7 +4,8 @@
 #
 #    pip-compile --output-file=requirements.txt requirements.in
 #
-appdynamics==21.2.0
+appdynamics==21.2.0.3144
+
 attrs==19.3.0
     # via
     #   -r requirements.in
