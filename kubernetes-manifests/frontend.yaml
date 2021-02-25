@@ -31,11 +31,15 @@ spec:
       containers:
       - name: front
         #image: gcr.io/bank-of-anthos/frontend:v0.4.1
+        imagePullPolicy: Always
         image: docker.io/danielhhowell/bofa-frontend
+        command: ["pyagent", "run", "-c", "/appdynamics/appd.cfg", "--", "gunicorn", "-b", ":8080", "--threads", "4", "--log-config", "/logging.conf", "--log-level=info", "frontend:create_app()"]
         volumeMounts:
         - name: publickey
           mountPath: "/root/.ssh"
           readOnly: true
+        - name: appdynamics
+          mountPath: /appdynamics
         env:
         - name: VERSION
           value: "v0.4.1"
@@ -69,6 +73,8 @@ spec:
             name: environment-config
         - configMapRef:
             name: service-api-config
+        - configMapRef:
+            name: env-map
         readinessProbe:
           httpGet:
             path: /ready
@@ -90,6 +96,24 @@ spec:
           items:
           - key: jwtRS256.key.pub
             path: publickey
+      - name: appd-scripts
+        configMap:
+          name: appd-pyagent
+      - name: appdynamics
+      initContainers:
+        - image: busybox:latest
+          name: appd-pyagent
+          envFrom:
+            - configMapRef:
+                name: env-map
+          command: ["/bin/sh", "/scripts/pyagent.sh"]
+          volumeMounts:
+            - mountPath: /scripts/pyagent.sh
+              name: appd-scripts
+              subPath: pyagent.sh
+              readOnly: true
+            - mountPath: /appdynamics
+              name: appdynamics
 ---
 apiVersion: v1
 kind: Service

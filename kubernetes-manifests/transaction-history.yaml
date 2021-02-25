@@ -31,7 +31,6 @@ spec:
       containers:
       - name: transactionhistory
         command: ["java", -javaagent:/appdynamics/javaagent.jar, "-cp", "/app/resources:/app/classes:/app/libs/*", "anthos.samples.bankofanthos.transactionhistory.TransactionHistoryApplication" ]
-      - name: transactionhistory
         image: gcr.io/bank-of-anthos/transactionhistory:v0.4.1
         volumeMounts:
         - name: publickey

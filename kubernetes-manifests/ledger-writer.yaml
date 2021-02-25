@@ -29,8 +29,7 @@ spec:
       terminationGracePeriodSeconds: 5
       containers:
       - name: ledgerwriter
-        command: [ "java", -javaagent:/appdynamics/javaagent.jar, "-cp", "/app/resources:/app/classes:/app/libs/*", "anthos.samples.bankofanthos.ledgerwriter.LedgerWriterApplication" ]
-      - name: ledgerwriter
+        command: ["java", -javaagent:/appdynamics/javaagent.jar, "-cp", "/app/resources:/app/classes:/app/libs/*", "anthos.samples.bankofanthos.ledgerwriter.LedgerWriterApplication" ]
         image: gcr.io/bank-of-anthos/ledgerwriter:v0.4.1
         volumeMounts:
         - name: publickey

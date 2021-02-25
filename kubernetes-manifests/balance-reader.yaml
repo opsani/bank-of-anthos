@@ -30,7 +30,6 @@ spec:
       containers:
       - name: balancereader
         command: ["java", -javaagent:/appdynamics/javaagent.jar, "-cp", "/app/resources:/app/classes:/app/libs/*", "anthos.samples.bankofanthos.balancereader.BalanceReaderApplication" ]
-      - name: balancereader
         image: gcr.io/bank-of-anthos/balancereader:v0.4.1
         volumeMounts:
         - name: publickey
