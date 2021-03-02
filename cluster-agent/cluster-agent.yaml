@@ -1,0 +1,14 @@
+apiVersion: appdynamics.com/v1alpha1
+kind: Clusteragent
+metadata:
+  name: k8s-cluster-agent
+  namespace: appdynamics
+spec:
+  appName: "bofa-appd"
+  controllerUrl: "https://opsani-prod.saas.appdynamics.com:443"
+  account: "opsani-prod"
+  # docker image info
+  image: "docker.io/appdynamics/cluster-agent:latest"
+  nsToMonitor:
+    - "appd-bankofanthos"
+  serviceAccountName: appdynamics-cluster-agent

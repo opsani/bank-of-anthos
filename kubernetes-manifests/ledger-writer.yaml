@@ -67,12 +67,12 @@ spec:
           valueFrom:
             secretKeyRef:
               key: accesskey
-              name: mysecret
+              name: appd-secrets
         - name: APPDYNAMICS_AGENT_ACCOUNT_NAME
           valueFrom:
             secretKeyRef:
               key: accountname
-              name: mysecret
+              name: appd-secrets
         - name: ROLE
           value: ledgerwriter
         - name: APPDYNAMICS_AGENT_NODE_NAME

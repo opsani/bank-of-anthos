@@ -61,4 +61,18 @@ data:
   APPDYNAMICS_NETVIZ_AGENT_PORT: "3892"
   RETRY: 10s
   TIMEOUT: 300s
+---
+# Base64 encoded AppD credentials to be passed to the ServoX connector
+apiVersion: v1
+kind: Secret
+metadata:
+  name: appd-secrets
+type: Opaque
+data:
+  username: ""
+  accountname: ""
+  password: ""
+  # accesskey is used in the machine agents directly
+  accesskey: ""
+
 
