@@ -1,7 +1,0 @@
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: bofa-appd
-spec:
-  finalizers:
-  - kubernetes

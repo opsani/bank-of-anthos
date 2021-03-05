@@ -1,8 +1,10 @@
-# Deploy Bank of Anthos for Opsani Optimization Trials
+# Bank of Anthos with AppDynamics
 
-Bank of Anthos is a polyglot application that can be used for a number of purposes. Opsani is providing this update to support optmization trials with enough scale and a transaction-defined load generator.
+[Bank of Anthos](https://github.com/GoogleCloudPlatform/bank-of-anthos) is a complete demo banking application that is K8s-based built with Java and Python components. 
 
-This will support your efforts in deploying and validating this application.
+[AppDynamics](https://www.appdynamics.com/) is an application performance management platform that allows for robust metric gathering and control of deployments.
+
+This repo is built to serve the necessary components to instrument Bank of Anthos with AppDynamics agents.
 
 ## Prerequistes and Components
 
@@ -11,13 +13,35 @@ This will support your efforts in deploying and validating this application.
 3. target kubernetes cluster with at least **8** AWS m5.xl equivalent nodes avaialble exclusively for this test
 4. ability to create a namespace, or define a namespace in the NAMESPACE environment variable for Bank of Anthos
 5. ability to create the metrics-service (or already have it installed) in the kube-systems administrative namespace
+6. an AppDynamics account with sufficient licenses for all services (alternatively, selectively use the non-instrumented images for certain services accordingly), as well as proper allocation of these licenses under rules
+
+## Overview of Changes for use with AppDynamics
+
+Bank of Anthos is comprised of 8 services (2 databases and 6 components). For use with AppDynamics, each of the 6 components has to be instrumented, which varies based on the underlying language of the component. 
+
+The Java components (balance-reader, ledger-writer, and transaction-history) utilize the [AppDynamics Java machine agent](https://docs.appdynamics.com/display/PRO21/Install+the+Java+Agent), which is installed into the application's JVM. The following changes have been made:
+
+1. An initContainer that pulls and installs the Java machine agent 
+2. Environment variables (both directly in the manifest and project-wide from the config.yaml) to set the AppDynamics parameters
+3. An /appdynamics volume+mount to run the "appd-env-script" from appd-scripts.yaml and ensure all variables are passed correctly to the agent
+4. An override entrypoint that starts the agent simultaneously with the component
+
+The Python components (contacts, frontend and userservice) utilize the [AppDynamics Python machine agent](https://docs.appdynamics.com/display/PRO21/Python+Agent) and have been modified as so:
+
+1. Rebulid of the docker images contained within the /src to include the AppDynamics python package
+2. Environment variables (both directly in the manifest and project-wide from the config.yaml) to set the AppDynamics parameters
+3. An initContainer that runs the 'appd-pyagent' script within appd-scripts.yaml to build an appd.cfg file
+4. An override entrypoint to that preprends 'pyagent run' to the gunicorn command based on the predefined entrypoint in the /src/*/Dockerfile
+
+The `config.yaml` is the only file required to be modified with AppDynamics-specific parameters. General variables are stored in the "appd-config" ConfigMap, where `APPDYNAMICS_AGENT_APPLICATION_NAME` has to be set and all others will run with the default options.
+AppDynamics credentials are stored in "appd-secrets", and require the base-64 encoded username, account name, controller host name, password and access key. 
 
 ## QUICKSTART
 
-Run the `deploy.sh` script which will attempt to validate the pre-requisites, install any missing k8s service components, and install the Bank of Anthos application:
+Populate the `/kubernetes-manifests/config.yaml` and run the `/appdynamics/deploy.sh` script which will attempt to validate the pre-requisites, install any missing k8s service components, and install the Bank of Anthos application:
 
 ```sh
-cd opsani && ./deploy.sh
+cd appdynamics && ./deploy.sh
 ```
 
 ## Install Bank of Anthos (Manually)
@@ -38,7 +62,7 @@ kubectl get nodes | grep 'internal' | wc -l
 
 ```sh
 echo "ensure NAMESPACE is an environment variable":
-export NAMESPACE=${NAMESPACE:-bank-of-anthos-opsani}
+export NAMESPACE=${NAMESPACE:-bank-of-anthos-appdynamics}
 if [ "`kubectl create ns ${NAMESPACE} >& /dev/null; echo $?`" ]; then
   echo `kubectl get ns ${NAMESPACE} | grep ${NAMESPACE}`
 fi

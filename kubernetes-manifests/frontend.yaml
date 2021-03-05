@@ -74,7 +74,7 @@ spec:
         - configMapRef:
             name: service-api-config
         - configMapRef:
-            name: env-map
+            name: appd-config
         readinessProbe:
           httpGet:
             path: /ready
@@ -103,9 +103,27 @@ spec:
       initContainers:
         - image: busybox:latest
           name: appd-pyagent
+          env:
+            - name: APPDYNAMICS_AGENT_NODE_NAME
+              value: frontend
+            - name: APPDYNAMICS_AGENT_ACCOUNT_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  key: accesskey
+                  name: appd-secrets
+            - name: APPDYNAMICS_AGENT_ACCOUNT_NAME
+              valueFrom:
+                secretKeyRef:
+                  key: accountname
+                  name: appd-secrets
+            - name: APPDYNAMICS_CONTROLLER_HOST_NAME
+              valueFrom:
+                secretKeyRef:
+                  key: hostname
+                  name: appd-secrets
           envFrom:
             - configMapRef:
-                name: env-map
+                name: appd-config
           command: ["/bin/sh", "/scripts/pyagent.sh"]
           volumeMounts:
             - mountPath: /scripts/pyagent.sh

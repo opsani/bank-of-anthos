@@ -89,13 +89,28 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: status.hostIP
+        - name: APPDYNAMICS_AGENT_ACCOUNT_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              key: accesskey
+              name: appd-secrets
+        - name: APPDYNAMICS_AGENT_ACCOUNT_NAME
+          valueFrom:
+            secretKeyRef:
+              key: accountname
+              name: appd-secrets
+        - name: APPDYNAMICS_CONTROLLER_HOST_NAME
+          valueFrom:
+            secretKeyRef:
+              key: hostname
+              name: appd-secrets
         envFrom:
         - configMapRef:
             name: environment-config
         - configMapRef:
             name: service-api-config
         - configMapRef:
-            name: env-map
+            name: appd-config
         # add ledger-db credentials from ConfigMap
         - configMapRef:
             name: ledger-db-config
@@ -128,6 +143,7 @@ spec:
         hostPath:
           path: /var/run/docker.sock
           type: Socket
+      # AppDynamics Config
       - name: project
       - name: appdynamics
         emptyDir: { }
