@@ -11,15 +11,18 @@ data:
     echo "creating file"
     if echo "$HOSTNAME" | grep -q "tuning"
     then
-        HOSTNAME=$HOSTNAME
+        NODEREUSEPREFIX="frontend-tuning"
     else
-        HOSTNAME=${APPDYNAMICS_AGENT_NODE_NAME}
+        NODEREUSEPREFIX=${APPDYNAMICS_AGENT_NODE_NAME}-service
     fi
     cat >/appdynamics/appd.cfg <<EOL
     [agent]
     app = ${APPDYNAMICS_AGENT_APPLICATION_NAME}
     tier = ${APPDYNAMICS_AGENT_NODE_NAME}-service
     node = ${HOSTNAME}
+    nodereuse = true
+    nodereuseprefix = ${NODEREUSEPREFIX}
+
 
     [log]
     level = debug
