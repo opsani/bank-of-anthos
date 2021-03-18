@@ -17,7 +17,7 @@ This repo is built to serve the necessary components to instrument Bank of Antho
 
 ## Overview of Changes for use with AppDynamics
 
-Bank of Anthos is comprised of 8 services (2 databases and 6 components). For use with AppDynamics, each of the 6 components has to be instrumented, which varies based on the underlying language of the component. 
+Bank of Anthos is comprised of 6 services (along with 2 databases). For use with AppDynamics, each of the 6 components has to be instrumented, which varies based on the underlying language of the component. Dynamic deployments (frontend and user-service) register a new AppD agent for each new pod initialized.
 
 The Java components (balance-reader, ledger-writer, and transaction-history) utilize the [AppDynamics Java machine agent](https://docs.appdynamics.com/display/PRO21/Install+the+Java+Agent), which is installed into the application's JVM. The following changes have been made:
 
@@ -129,11 +129,29 @@ parameters of the `kubernetes-manifests/loadgenerator.yaml` document with the fo
   SPAWN_RATE: How quickly to change during the step, there is likely no need to change this parameter.
   MIN_USERS: As the sinusoidal shape varies between "0" and "1" multiplied by the USER_SCALE parameter, it is often good to ensure some load, we set this as 50 by default.
 
-## Starting Optimization
+## Examining in AppDynamics Console
 
-At this point, the Bank of Anthos application should be running on your Kubernetes cluster and should have dynamic load reaching it. You are now ready to install the Opsani servo to begin optimization.
+At this point, the Bank of Anthos application should be running on your Kubernetes cluster, have dynamic load reaching it, and have AppDynamics agents running in each component that will be generating a flowmap and gathering metrics in the controller console.
 
-To do so, we suggest that you follow [dev-trial-README](dev-trial/README.md) for the simplest installation procedure. Alternatively, if you would like a more manual approach, the README.md located in the `servo_install.tar.gz` bundle that you downloaded is also suitable. If you do not have `servo_install.tar.gz`, check https://console.opsani.com or contact your Opsani support member.
+![](static/flowmap.png)
+
+## (Optional) Install the Cluster Agent
+
+The cluster agent allows for high-level insights into the underlying K8s behavior, such as:
+- pod failures and restarts
+- node starvation
+- pod eviction threats and pod quota violations
+- image and storage failures
+- pending or stuck pods
+- bad endpoints: detects broken links between pods and application components
+- service endpoints in a failed state
+- missing dependencies (Services, configMaps, Secrets)
+
+To install the CA, update the `cluster-agent/cluster-agent.yaml` with the target appName, controllerUrl and account, then apply it along with the CA operator (Note: this is not deployed in the automatic `deploy.sh` script).
+
+```sh
+kubectl -n ${NAMESPACE} apply -f ../appdynamics/cluster-agent/ 
+```
 
 ## Uninstall Bank-of-Anthos
 

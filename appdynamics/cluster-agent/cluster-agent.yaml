@@ -5,7 +5,7 @@ metadata:
   namespace: appdynamics
 spec:
   appName: ""
-  controllerUrl: "https://appdynamics-prod.saas.appdynamics.com:443"
+  controllerUrl: ""
   account: ""
   # docker image info
   image: "docker.io/appdynamics/cluster-agent:latest"
