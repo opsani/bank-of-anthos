@@ -51,7 +51,7 @@ data:
   APPD_ES_HOST: "analytics.api.appdynamics.com"
   APPD_ES_PORT: "9080"
   APPD_ES_SSL: "false"
-  APPDYNAMICS_AGENT_APPLICATION_NAME:
+  APPDYNAMICS_AGENT_APPLICATION_NAME: "appd-payment"
   APPDYNAMICS_CONTROLLER_PORT: "80"
   APPDYNAMICS_CONTROLLER_SSL_ENABLED: "False"
   APPDYNAMICS_NETVIZ_AGENT_PORT: "3892"
@@ -65,9 +65,9 @@ metadata:
   name: appd-secrets
 type: Opaque
 data:
-  username: ""
-  accountname: ""
-  hostname: ""
-  password: ""
+  username: "ZGFuaWVs"
+  accountname: "b3BzYW5pLXByb2Q="
+  hostname: "b3BzYW5pLXByb2Quc2Fhcy5hcHBkeW5hbWljcy5jb20="
+  password: "NG40bGIzNGRa"
   # accesskey is used in the machine agents directly
-  accesskey: ""
+  accesskey: "enNoZnJ0ZHFrMXRs"

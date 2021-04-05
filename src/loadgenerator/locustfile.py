@@ -30,6 +30,8 @@ from locust import HttpUser, TaskSet, SequentialTaskSet, LoadTestShape, task, be
 
 MASTER_PASSWORD = "password"
 
+
+DYNAMIC_LOAD = os.getenv("DYNAMIC_LOAD")
 NUM_STEPS = int(os.getenv("NUM_STEPS", 480))
 STEP_SEC = int(os.getenv("STEP_SEC", 15))
 MIN_USERS = int(os.getenv("MIN_USERS", 5))
@@ -124,6 +126,7 @@ class AllTasks(SequentialTaskSet):
             if success:
                 # go to AuthenticatedTasks
                 self.parent.username = new_username
+                self.client.close()
                 self.interrupt()
 
     @task
@@ -151,8 +154,6 @@ class AllTasks(SequentialTaskSet):
                 for r_hist in response.history:
                     if r_hist.status_code > 200 and r_hist.status_code < 400:
                         response.failure("Got redirect")
-                        self.client.close()
-                        self.interrupt()
 
 
         @task(10)
@@ -165,8 +166,6 @@ class AllTasks(SequentialTaskSet):
                 for r_hist in response.history:
                     if r_hist.status_code > 200 and r_hist.status_code < 400:
                         response.failure("Got redirect - wasn't logged on")
-                        self.client.close()
-                        self.interrupt()
 
         @task(5)
         def payment(self, amount=None):
@@ -228,8 +227,6 @@ class AllTasks(SequentialTaskSet):
                     response.success()
                 else:
                     response.failure("login failed")
-                    self.client.close()
-                    self.interrupt()
 
         @task(2)
         def logout(self):
@@ -251,7 +248,6 @@ class WebsiteUser(HttpUser):
     """
     Locust class to simulate HTTP users
     """
-
     tasks = {AllTasks}
     wait_time = between(0.1, 1)
 
@@ -265,22 +261,28 @@ class StagesShape(LoadTestShape):
     def tick(self):
         run_time = self.get_run_time()
 
-        tick_data = (
-            math.floor(
-                (
-                    (
-                        math.sin(
-                            math.pi / NUM_STEPS * math.floor(run_time / STEP_SEC)
-                            - math.pi / 2
-                        )
-                    )
-                    + 1
-                )
-                / 2
-                * USER_SCALE
-            )
-            + MIN_USERS,
-            SPAWN_RATE,
-        )
+	
+        if DYNAMIC_LOAD:
 
-        return tick_data
+            tick_data = (
+                math.floor(
+                    (
+                        (
+                            math.sin(
+                                math.pi / NUM_STEPS * math.floor(run_time / STEP_SEC)
+                                - math.pi / 2
+                            )
+                        )
+                        + 1
+                    )
+                    / 2
+                    * USER_SCALE
+                )
+                + MIN_USERS,
+                SPAWN_RATE,
+            )
+
+            return tick_data
+        else:
+            tick_data = (MIN_USERS+USER_SCALE, SPAWN_RATE)
+            return tick_data
