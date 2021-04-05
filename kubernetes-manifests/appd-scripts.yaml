@@ -9,7 +9,7 @@ data:
   pyagent.sh : |
     #! /bin/sh
     echo "creating file"
-    if echo "$HOSTNAME" | grep -q "tuning"
+    if echo "$HOSTNAME" | grep -q "frontend-tuning"
     then
         NODEREUSEPREFIX="frontend-tuning"
     else
