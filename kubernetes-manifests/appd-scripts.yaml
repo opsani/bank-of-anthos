@@ -9,9 +9,9 @@ data:
   pyagent.sh : |
     #! /bin/sh
     echo "creating file"
-    if echo "$HOSTNAME" | grep -q "frontend-tuning"
+    if echo "$HOSTNAME" | grep -q "tuning"
     then
-        NODEREUSEPREFIX="frontend-tuning"
+        NODEREUSEPREFIX=${APPDYNAMICS_AGENT_NODE_NAME}-tuning
     else
         NODEREUSEPREFIX=${APPDYNAMICS_AGENT_NODE_NAME}-service
     fi
