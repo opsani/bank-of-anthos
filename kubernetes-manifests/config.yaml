@@ -66,8 +66,8 @@ metadata:
 type: Opaque
 data:
   username: ""
-  accountname: "="
-  hostname: "="
+  accountname: ""
+  hostname: ""
   password: ""
   # accesskey is used in the machine agents directly
   accesskey: ""
