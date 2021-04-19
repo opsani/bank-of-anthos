@@ -30,9 +30,8 @@ spec:
       terminationGracePeriodSeconds: 5
       containers:
       - name: userservice
-        #image: gcr.io/bank-of-anthos/userservice:v0.4.1
-        imagePullPolicy: Always
         image: docker.io/danielhhowell/bofa-user
+        imagePullPolicy: Always
         command: [ "pyagent", "run", "-c", "/appdynamics/appd.cfg", "--", "gunicorn", "-b", ":8080", "--threads", "2", "--log-config", "/logging.conf", "--log-level=info", "userservice:create_app()" ]
         volumeMounts:
         - name: keys

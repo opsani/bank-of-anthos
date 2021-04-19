@@ -29,9 +29,8 @@ spec:
       terminationGracePeriodSeconds: 5
       containers:
       - name: front
-        #image: gcr.io/bank-of-anthos/frontend:v0.4.1
-        imagePullPolicy: Always
         image: docker.io/danielhhowell/bofa-frontend
+        imagePullPolicy: Always
         command: ["pyagent", "run", "-c", "/appdynamics/appd.cfg", "--", "gunicorn", "-b", ":8080", "--threads", "4", "--log-config", "/logging.conf", "--log-level=info", "frontend:create_app()"]
         volumeMounts:
         - name: publickey

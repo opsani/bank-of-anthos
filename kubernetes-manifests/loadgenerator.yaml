@@ -49,8 +49,6 @@ spec:
           value: "1"
         - name: MIN_USERS
           value: "25"
-        - name: DYNAMIC_LOAD
-          value: "False"
         - name: LOG_LEVEL
           value: "info"
         # Add this environment variable to enable load that cycles
