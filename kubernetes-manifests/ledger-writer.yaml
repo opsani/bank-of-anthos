@@ -22,6 +22,7 @@ spec:
       app: ledgerwriter
   template:
     metadata:
+      annotations: {}
       labels:
         app: ledgerwriter
     spec:

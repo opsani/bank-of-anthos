@@ -1,0 +1,18 @@
+---
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+patches:
+- path: opsani-envoy-patch.yaml
+  target:
+    group: apps
+    kind: Deployment
+    name: frontend
+    version: v1
+- path: opsani-service-port-patch.yaml
+  target:
+    kind: Service
+    name: frontend
+    version: v1
+bases:
+- ./../kubernetes-manifests/

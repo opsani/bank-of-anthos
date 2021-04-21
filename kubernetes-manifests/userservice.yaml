@@ -23,6 +23,7 @@ spec:
       app: userservice
   template:
     metadata:
+      annotations: {}
       labels:
         app: userservice
     spec:

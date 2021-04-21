@@ -22,6 +22,7 @@ spec:
       app: frontend
   template:
     metadata:
+      annotations: {}
       labels:
         app: frontend
     spec:
