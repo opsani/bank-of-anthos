@@ -29,7 +29,7 @@ spec:
       terminationGracePeriodSeconds: 5
       containers:
       - name: contacts
-        image: docker.io/danielhhowell/bofa-contacts
+        image: ghcr.io/opsani/bank-of-anthos/contacts:appd
         imagePullPolicy: Always
         command: [ "pyagent", "run", "-c", "/appdynamics/appd.cfg", "--", "gunicorn", "-b", ":8080", "--threads", "4", "--log-config", "/logging.conf", "--log-level=info", "contacts:create_app()" ]
         volumeMounts:
