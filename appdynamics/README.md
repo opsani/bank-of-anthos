@@ -1,8 +1,10 @@
-# Deploy Bank of Anthos for Opsani Optimization Trials
+# Bank of Anthos with AppDynamics
 
-Bank of Anthos is a polyglot application that can be used for a number of purposes. Opsani is providing this update to support optmization trials with enough scale and a transaction-defined load generator.
+[Bank of Anthos](https://github.com/GoogleCloudPlatform/bank-of-anthos) is a complete demo banking application that is K8s-based built with Java and Python components. 
 
-This will support your efforts in deploying and validating this application.
+[AppDynamics](https://www.appdynamics.com/) is an application performance management platform that allows for robust metric gathering and control of deployments.
+
+This repo is built to serve the necessary components to instrument Bank of Anthos with AppDynamics agents.
 
 ## Prerequistes and Components
 
@@ -11,13 +13,35 @@ This will support your efforts in deploying and validating this application.
 3. target kubernetes cluster with at least **8** AWS m5.xl equivalent nodes avaialble exclusively for this test
 4. ability to create a namespace, or define a namespace in the NAMESPACE environment variable for Bank of Anthos
 5. ability to create the metrics-service (or already have it installed) in the kube-systems administrative namespace
+6. an AppDynamics account with sufficient licenses for all services (alternatively, selectively use the non-instrumented images for certain services accordingly), as well as proper allocation of these licenses under rules
+
+## Overview of Changes for use with AppDynamics
+
+Bank of Anthos is comprised of 6 services (along with 2 databases). For use with AppDynamics, each of the 6 components has to be instrumented, which varies based on the underlying language of the component. Dynamic deployments (frontend and user-service) register a new AppD agent for each new pod initialized.
+
+The Java components (balance-reader, ledger-writer, and transaction-history) utilize the [AppDynamics Java machine agent](https://docs.appdynamics.com/display/PRO21/Install+the+Java+Agent), which is installed into the application's JVM. The following changes have been made:
+
+1. An initContainer that pulls and installs the Java machine agent 
+2. Environment variables (both directly in the manifest and project-wide from the config.yaml) to set the AppDynamics parameters
+3. An /appdynamics volume+mount to run the "appd-env-script" from appd-scripts.yaml and ensure all variables are passed correctly to the agent
+4. An override entrypoint that starts the agent simultaneously with the component
+
+The Python components (contacts, frontend and userservice) utilize the [AppDynamics Python machine agent](https://docs.appdynamics.com/display/PRO21/Python+Agent) and have been modified as so:
+
+1. Rebulid of the docker images contained within the /src to include the AppDynamics python package
+2. Environment variables (both directly in the manifest and project-wide from the config.yaml) to set the AppDynamics parameters
+3. An initContainer that runs the 'appd-pyagent' script within appd-scripts.yaml to build an appd.cfg file
+4. An override entrypoint to that preprends 'pyagent run' to the gunicorn command based on the predefined entrypoint in the /src/*/Dockerfile
+
+The `config.yaml` is the only file required to be modified with AppDynamics-specific parameters. General variables are stored in the "appd-config" ConfigMap, where `APPDYNAMICS_AGENT_APPLICATION_NAME` has to be set and all others will run with the default options.
+AppDynamics credentials are stored in "appd-secrets", and require the base-64 encoded username, account name, controller host name, password and access key. 
 
 ## QUICKSTART
 
-Run the `deploy.sh` script which will attempt to validate the pre-requisites, install any missing k8s service components, and install the Bank of Anthos application:
+Populate the `/kubernetes-manifests/config.yaml` and run the `/appdynamics/deploy.sh` script which will attempt to validate the pre-requisites, install any missing k8s service components, and install the Bank of Anthos application:
 
 ```sh
-cd opsani && ./deploy.sh
+cd appdynamics && ./deploy.sh
 ```
 
 ## Install Bank of Anthos (Manually)
@@ -38,7 +62,7 @@ kubectl get nodes | grep 'internal' | wc -l
 
 ```sh
 echo "ensure NAMESPACE is an environment variable":
-export NAMESPACE=${NAMESPACE:-bank-of-anthos-opsani}
+export NAMESPACE=${NAMESPACE:-bank-of-anthos-appdynamics}
 if [ "`kubectl create ns ${NAMESPACE} >& /dev/null; echo $?`" ]; then
   echo `kubectl get ns ${NAMESPACE} | grep ${NAMESPACE}`
 fi
@@ -105,11 +129,29 @@ parameters of the `kubernetes-manifests/loadgenerator.yaml` document with the fo
   SPAWN_RATE: How quickly to change during the step, there is likely no need to change this parameter.
   MIN_USERS: As the sinusoidal shape varies between "0" and "1" multiplied by the USER_SCALE parameter, it is often good to ensure some load, we set this as 50 by default.
 
-## Starting Optimization
+## Examining in AppDynamics Console
 
-At this point, the Bank of Anthos application should be running on your Kubernetes cluster and should have dynamic load reaching it. You are now ready to install the Opsani servo to begin optimization.
+At this point, the Bank of Anthos application should be running on your Kubernetes cluster, have dynamic load reaching it, and have AppDynamics agents running in each component that will be generating a flowmap and gathering metrics in the controller console.
 
-To do so, we suggest that you follow [dev-trial-README](dev-trial/README.md) for the simplest installation procedure. Alternatively, if you would like a more manual approach, the README.md located in the `servo_install.tar.gz` bundle that you downloaded is also suitable. If you do not have `servo_install.tar.gz`, check https://console.opsani.com or contact your Opsani support member.
+![](static/flowmap.png)
+
+## (Optional) Install the Cluster Agent
+
+The cluster agent allows for high-level insights into the underlying K8s behavior, such as:
+- pod failures and restarts
+- node starvation
+- pod eviction threats and pod quota violations
+- image and storage failures
+- pending or stuck pods
+- bad endpoints: detects broken links between pods and application components
+- service endpoints in a failed state
+- missing dependencies (Services, configMaps, Secrets)
+
+To install the CA, update the `cluster-agent/cluster-agent.yaml` with the target appName, controllerUrl and account, then apply it along with the CA operator (Note: this is not deployed in the automatic `deploy.sh` script).
+
+```sh
+kubectl -n ${NAMESPACE} apply -f ../appdynamics/cluster-agent/ 
+```
 
 ## Uninstall Bank-of-Anthos
 

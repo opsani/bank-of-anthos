@@ -29,11 +29,15 @@ spec:
       terminationGracePeriodSeconds: 5
       containers:
       - name: contacts
-        image: gcr.io/bank-of-anthos/contacts:v0.4.1
+        image: ghcr.io/opsani/bank-of-anthos/contacts:appd
+        imagePullPolicy: Always
+        command: [ "pyagent", "run", "-c", "/appdynamics/appd.cfg", "--", "gunicorn", "-b", ":8080", "--threads", "4", "--log-config", "/logging.conf", "--log-level=info", "contacts:create_app()" ]
         volumeMounts:
         - name: publickey
           mountPath: "/root/.ssh"
           readOnly: true
+        - name: appdynamics
+          mountPath: /appdynamics
         env:
         - name: VERSION
           value: "v0.4.1"
@@ -50,6 +54,8 @@ spec:
             name: environment-config
         - configMapRef:
             name: accounts-db-config
+        - configMapRef:
+            name: appd-config
         resources:
           requests:
             cpu: 1000m
@@ -71,6 +77,42 @@ spec:
           items:
           - key: jwtRS256.key.pub
             path: publickey
+      - name: appd-scripts
+        configMap:
+          name: appd-pyagent
+      - name: appdynamics
+      initContainers:
+        - image: busybox:latest
+          name: appd-pyagent
+          env:
+            - name: APPDYNAMICS_AGENT_NODE_NAME
+              value: contacts
+            - name: APPDYNAMICS_AGENT_ACCOUNT_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  key: accesskey
+                  name: appd-secrets
+            - name: APPDYNAMICS_AGENT_ACCOUNT_NAME
+              valueFrom:
+                secretKeyRef:
+                  key: accountname
+                  name: appd-secrets
+            - name: APPDYNAMICS_CONTROLLER_HOST_NAME
+              valueFrom:
+                secretKeyRef:
+                  key: hostname
+                  name: appd-secrets
+          envFrom:
+            - configMapRef:
+                name: appd-config
+          command: ["/bin/sh", "/scripts/pyagent.sh"]
+          volumeMounts:
+            - mountPath: /scripts/pyagent.sh
+              name: appd-scripts
+              subPath: pyagent.sh
+              readOnly: true
+            - mountPath: /appdynamics
+              name: appdynamics
 ---
 apiVersion: v1
 kind: Service

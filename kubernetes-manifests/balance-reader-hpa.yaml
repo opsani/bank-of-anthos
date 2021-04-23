@@ -3,7 +3,7 @@ kind: HorizontalPodAutoscaler
 metadata:
   name: balancereader
 spec:
-  maxReplicas: 7
+  maxReplicas: 5
   minReplicas: 1
   targetCPUUtilizationPercentage: 50
   scaleTargetRef:

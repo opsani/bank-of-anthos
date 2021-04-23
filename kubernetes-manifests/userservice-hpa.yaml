@@ -4,7 +4,7 @@ kind: HorizontalPodAutoscaler
 metadata:
   name: userservice
 spec:
-  maxReplicas: 20
+  maxReplicas: 12
   minReplicas: 1
   targetCPUUtilizationPercentage: 50
   scaleTargetRef:

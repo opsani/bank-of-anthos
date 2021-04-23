@@ -1,0 +1,14 @@
+apiVersion: appdynamics.com/v1alpha1
+kind: Clusteragent
+metadata:
+  name: k8s-cluster-agent
+  namespace: appdynamics
+spec:
+  appName: ""
+  controllerUrl: ""
+  account: ""
+  # docker image info
+  image: "docker.io/appdynamics/cluster-agent:latest"
+  nsToMonitor:
+    - ""
+  serviceAccountName: appdynamics-cluster-agent
