@@ -37,8 +37,8 @@ spec:
         - name: keys
           mountPath: "/root/.ssh"
           readOnly: true
-#        - name: appdynamics
-#          mountPath: /appdynamics
+        - name: appdynamics
+          mountPath: /appdynamics
         ports:
         - name: http-server
           containerPort: 8080
@@ -86,42 +86,42 @@ spec:
             path: privatekey
           - key: jwtRS256.key.pub
             path: publickey
-#      - name: appd-scripts
-#        configMap:
-#          name: appd-pyagent
-#      - name: appdynamics
-#      initContainers:
-#        - image: busybox:latest
-#          name: appd-pyagent
-#          env:
-#            - name: APPDYNAMICS_AGENT_NODE_NAME
-#              value: user
-#            - name: APPDYNAMICS_AGENT_ACCOUNT_ACCESS_KEY
-#              valueFrom:
-#                secretKeyRef:
-#                  key: accesskey
-#                  name: appd-secrets
-#            - name: APPDYNAMICS_AGENT_ACCOUNT_NAME
-#              valueFrom:
-#                secretKeyRef:
-#                  key: accountname
-#                  name: appd-secrets
-#            - name: APPDYNAMICS_CONTROLLER_HOST_NAME
-#              valueFrom:
-#                secretKeyRef:
-#                  key: hostname
-#                  name: appd-secrets
-#          envFrom:
-#            - configMapRef:
-#                name: appd-config
-#          command: ["/bin/sh", "/scripts/pyagent.sh"]
-#          volumeMounts:
-#            - mountPath: /scripts/pyagent.sh
-#              name: appd-scripts
-#              subPath: pyagent.sh
-#              readOnly: true
-#            - mountPath: /appdynamics
-#              name: appdynamics
+      - name: appd-scripts
+        configMap:
+          name: appd-pyagent
+      - name: appdynamics
+      initContainers:
+        - image: busybox:latest
+          name: appd-pyagent
+          env:
+            - name: APPDYNAMICS_AGENT_NODE_NAME
+              value: user
+            - name: APPDYNAMICS_AGENT_ACCOUNT_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  key: accesskey
+                  name: appd-secrets
+            - name: APPDYNAMICS_AGENT_ACCOUNT_NAME
+              valueFrom:
+                secretKeyRef:
+                  key: accountname
+                  name: appd-secrets
+            - name: APPDYNAMICS_CONTROLLER_HOST_NAME
+              valueFrom:
+                secretKeyRef:
+                  key: hostname
+                  name: appd-secrets
+          envFrom:
+            - configMapRef:
+                name: appd-config
+          command: ["/bin/sh", "/scripts/pyagent.sh"]
+          volumeMounts:
+            - mountPath: /scripts/pyagent.sh
+              name: appd-scripts
+              subPath: pyagent.sh
+              readOnly: true
+            - mountPath: /appdynamics
+              name: appdynamics
 
 
 ---
