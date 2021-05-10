@@ -37,6 +37,9 @@ STEP_SEC = int(os.getenv("STEP_SEC", 15))
 MIN_USERS = int(os.getenv("MIN_USERS", 5))
 SPAWN_RATE = float(os.getenv("SPAWN_RATE", 1))
 USER_SCALE = int(os.getenv("USER_SCALE", 50))
+MIN_WAIT = os.getenv("MIN_WAIT")
+MAX_WAIT = os.getenv("MAX_WAIT")
+
 TRANSACTION_ACCT_LIST = [
     str(randint(1111100000, 1111199999)) for _ in range(int(USER_SCALE + MIN_USERS))
 ]
@@ -249,7 +252,16 @@ class WebsiteUser(HttpUser):
     Locust class to simulate HTTP users
     """
     tasks = {AllTasks}
-    wait_time = between(0.1, 1)
+    if MIN_WAIT or MAX_WAIT:
+      if not MIN_WAIT:
+         MIN_WAIT=0
+      if not MAX_WAIT:
+         if MIN_WAIT >= 1:
+           MAX_WAIT=1
+         else:
+           MAX_WAIT=MIN_WAIT
+      wait_time = between(MIN_WAIT,MAX_WAIT)
+
 
 
 class StagesShape(LoadTestShape):
