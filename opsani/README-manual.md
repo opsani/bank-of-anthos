@@ -91,7 +91,7 @@ parameters of the `kubernetes-manifests/loadgenerator.yaml` document with the fo
 
 At this point, the Bank of Anthos application should be running on your Kubernetes cluster and should have dynamic load reaching it. You are now ready to install the Opsani servo to begin optimization.
 
-To do so, we suggest that you follow [dev-trial-README](dev-trial/README.md) for the simplest installation procedure. Alternatively, if you would like a more manual approach, the README.md located in the `servo_install.tar.gz` bundle that you downloaded is also suitable. If you do not have `servo_install.tar.gz`, check https://console.opsani.com or contact your Opsani support member.
+To do so, we suggest that you follow the README.md located in the `servo_install.tar.gz` bundle that you downloaded. If you do not have `servo_install.tar.gz`, check https://console.opsani.com or contact your Opsani support member.
 
 ## Uninstall Bank-of-Anthos
 

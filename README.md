@@ -15,6 +15,18 @@ cd opsani
 sh ./deploy.sh
 ```
 
+## Opsani optimization
+
+Once the Bank-of-Anthos app is up and running, Opsani optimization can be launched by downloading the servo_install.tgz documents from your Opsani Console (check with your Opsani Service Engineer if a consolehas not yet been assigned) and following the README.md documentation.
+
+*NOTE*: The following variables are useful for modifiying the opsani-manifests.yaml document:
+
+{{ NAMESPACE }} = 'bank-of-anthos-opsani'
+{{ DEPLOYMENT }} = 'frontend'
+{{ CONTAINER }} = 'front'
+{{ SERVICE }} = 'frontend'
+
+
 ## Service Architecture
 
 ![Architecture Diagram](./docs/architecture.png)
