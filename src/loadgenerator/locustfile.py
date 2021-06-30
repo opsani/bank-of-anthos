@@ -92,7 +92,7 @@ class AllTasks(SequentialTaskSet):
         set of tasks to run before obtaining an auth token
         """
 
-        @task(5)
+        @task(50)
         def view_login(self):
             """
             load the /login page
@@ -103,7 +103,7 @@ class AllTasks(SequentialTaskSet):
                     if r_hist.status_code > 200 and r_hist.status_code < 400:
                         response.success()
 
-        @task(5)
+        @task(50)
         def view_signup(self):
             """
             load the /signup page
@@ -114,7 +114,7 @@ class AllTasks(SequentialTaskSet):
                     if r_hist.status_code > 200 and r_hist.status_code < 400:
                         response.success()
 
-        @task(2)
+        @task(20)
         def signup(self):
             """
             sends POST request to /signup to create a new user
@@ -128,6 +128,16 @@ class AllTasks(SequentialTaskSet):
                 self.parent.username = new_username
                 self.client.close()
                 self.interrupt()
+        
+        @task(1)
+        def logout_error(self):
+            """
+            generates an error against the logout endpoint (405 method not allowed)
+            """
+            with self.client.get("/logout", catch_response=True) as response:
+                for r_hist in response.history:
+                    if r_hist.status_code > 400:
+                        response.success()
 
     @task
     class AuthenticatedTasks(TaskSet):
