@@ -53,11 +53,11 @@ spec:
             name: accounts-db-config
         resources:
           requests:
-            cpu: 750m
-            memory: 1.5Gi
+            cpu: 500m
+            memory: 0.5Gi
           limits:
-            cpu: 750m
-            memory: 1.5Gi
+            cpu: 500m
+            memory: 0.5Gi
         readinessProbe:
           httpGet:
             path: /ready

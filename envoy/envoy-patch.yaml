@@ -27,25 +27,21 @@
         memory: 128Mi
 
 - op: add
-  path: "/spec/template/metadata/labels/sidecar.opsani.com~1type"
-  value: "envoy"
-
-- op: add
   path: "/spec/template/metadata/labels/opsani_role"
   value: "mainline"
 
 - op: add
-  path: "/spec/template/metadata/annotations/prometheus.opsani.com~1path"
+  path: "/spec/template/metadata/annotations/prometheus.io~1path"
   value: "/stats/prometheus"
 
 - op: add
-  path: "/spec/template/metadata/annotations/prometheus.opsani.com~1port"
+  path: "/spec/template/metadata/annotations/prometheus.io~1port"
   value: "9901"
 
 - op: add
-  path: "/spec/template/metadata/annotations/prometheus.opsani.com~1scheme"
+  path: "/spec/template/metadata/annotations/prometheus.io~1scheme"
   value: "http"
 
 - op: add
-  path: "/spec/template/metadata/annotations/prometheus.opsani.com~1scrape"
+  path: "/spec/template/metadata/annotations/prometheus.io~1scrape"
   value: "true"

@@ -17,7 +17,7 @@ kind: Deployment
 metadata:
   name: userservice
 spec:
-  replicas: 5
+  replicas: 2
   selector:
     matchLabels:
       app: userservice
@@ -67,11 +67,11 @@ spec:
           timeoutSeconds: 10
         resources:
           requests:
-            cpu: 750m
-            memory: 1.5Gi
+            cpu: 500m
+            memory: 0.5Gi
           limits:
-            cpu: 750m
-            memory: 1.5Gi
+            cpu: 500m
+            memory: 0.5Gi
       volumes:
       - name: keys
         secret:

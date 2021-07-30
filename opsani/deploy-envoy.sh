@@ -85,7 +85,7 @@ echo ""
 echo ""
 echo "Launch Bank-of-Anthos into ${NAMESPACE}"
 
-kubectl apply -n ${NAMESPACE} -k ../olas
+kubectl apply -n ${NAMESPACE} -k ../envoy
 if [ ! "echo $?" ]; then
   echo ""
   echo "a component may have failed to install.  Please look at the above output for errors"

@@ -29,7 +29,7 @@ spec:
       serviceAccountName: default
       terminationGracePeriodSeconds: 5
       containers:
-      - name: front
+      - name: frontend
         image: gcr.io/bank-of-anthos/frontend:v0.4.1
         volumeMounts:
         - name: publickey
@@ -77,11 +77,11 @@ spec:
           timeoutSeconds: 10
         resources:
           requests:
-            cpu: 750m
-            memory: 1.5Gi
+            cpu: 500m
+            memory: 0.5Gi
           limits:
-            cpu: 750m
-            memory: 1.5Gi
+            cpu: 500m
+            memory: 0.5Gi
       volumes:
       - name: publickey
         secret:
