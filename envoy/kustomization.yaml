@@ -31,7 +31,7 @@ patches:
     kind: Deployment
     name: userservice
     version: v1
-- path: frontend-service-port-patch.yaml
+- path: service-port-patch.yaml
   target:
     kind: Service
     name: userservice
