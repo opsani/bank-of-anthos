@@ -80,8 +80,8 @@ spec:
             cpu: 1000m
             memory: 1.0Gi
           limits:
-            cpu: 1000m
-            memory: 1.0Gi
+            cpu: 2000m
+            memory: 2.0Gi
       volumes:
       - name: publickey
         secret:

@@ -1,12 +1,29 @@
-
-apiVersion: autoscaling/v1
+apiVersion: autoscaling/v2beta2
 kind: HorizontalPodAutoscaler
 metadata:
   name: userservice
 spec:
-  maxReplicas: 20
+  maxReplicas: 50
+  metrics:
+# "Default standard Resource based metric"
+#  - type: Resource
+#    resource:
+#      name: cpu
+#      target:
+#        type: Utilization
+#        averageUtilization: 50
+# "Custom External metric"
+  - external:
+      metric:
+        name: latency_p90
+        selector:
+          matchLabels:
+            app: userservice
+      target:
+        averageValue: 1000m
+        type: AverageValue
+    type: External
   minReplicas: 1
-  targetCPUUtilizationPercentage: 50
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment

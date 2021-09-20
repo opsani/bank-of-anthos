@@ -3,7 +3,7 @@ kind: HorizontalPodAutoscaler
 metadata:
   name: frontend
 spec:
-  maxReplicas: 20
+  maxReplicas: 50
   metrics:
 # "Default standard Resource based metric"
 #  - type: Resource

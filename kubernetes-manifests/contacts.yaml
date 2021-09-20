@@ -53,8 +53,8 @@ spec:
             name: accounts-db-config
         resources:
           requests:
-            cpu: 500m
-            memory: 0.5Gi
+            cpu: 250m
+            memory: 0.25Gi
           limits:
             cpu: 500m
             memory: 0.5Gi
