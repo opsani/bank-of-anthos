@@ -20,7 +20,7 @@ spec:
           matchLabels:
             app: contacts
       target:
-        averageValue: 100m
+        averageValue: 1000m
         type: AverageValue
     type: External
   minReplicas: 1
