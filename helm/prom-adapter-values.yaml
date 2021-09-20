@@ -2,3 +2,73 @@ prometheus:
   url: http://prometheus-server.metrics.svc
   port: 80
   path: ""
+rules:
+  default: true
+  custom:
+    - metricsQuery: avg(rate(envoy_cluster_external_upstream_rq_time_bucket{kubernetes_namespace!="",kubernetes_pod_name!="",app!=""}[5m])) by (app)
+      name:
+        as: latency_p90
+        matches: ""
+      resources:
+        template: <<.Resource>>
+        overrides:
+          kubernetes_namespace:
+            resource: namespace
+          kubernetes_pod_name:
+            resource: pod
+      seriesQuery: '{__name__=~"^envoy_cluster_external_upstream_rq_time_bucket"}'  
+# - seriesQuery: '{__name__=~"^some_metric_count$"}'
+#   resources:
+#     template: <<.Resource>>
+#   name:
+#     matches: ""
+#     as: "my_custom_metric"
+#   metricsQuery: sum(<<.Series>>{<<.LabelMatchers>>}) by (<<.GroupBy>>)
+  # Mounts a configMap with pre-generated rules for use. Overrides the
+  # default, custom, external and resource entries
+  existing:
+  external:
+    - metricsQuery: avg(rate(envoy_cluster_external_upstream_rq_time_bucket{kubernetes_namespace!="",kubernetes_pod_name!="",app!=""}[5m])) by (app)
+      name:
+        as: latency_p90
+        matches: ""
+      resources:
+        overrides:
+          kubernetes_namespace:
+            resource: namespace
+          kubernetes_pod_name:
+            resource: pod
+      seriesQuery: '{__name__=~"^envoy_cluster_external_upstream_rq_time_bucket"}'
+# - seriesQuery: '{__name__=~"^some_metric_count$"}'
+#   resources:
+#     template: <<.Resource>>
+#   name:
+#     matches: ""
+#     as: "my_external_metric"
+#   metricsQuery: sum(<<.Series>>{<<.LabelMatchers>>}) by (<<.GroupBy>>)
+  resource: {}
+#   cpu:
+#     containerQuery: sum(rate(container_cpu_usage_seconds_total{<<.LabelMatchers>>, container!=""}[3m])) by (<<.GroupBy>>)
+#     nodeQuery: sum(rate(container_cpu_usage_seconds_total{<<.LabelMatchers>>, id='/'}[3m])) by (<<.GroupBy>>)
+#     resources:
+#       overrides:
+#         node:
+#           resource: node
+#         namespace:
+#           resource: namespace
+#         pod:
+#           resource: pod
+#     containerLabel: container
+#   memory:
+#     containerQuery: sum(container_memory_working_set_bytes{<<.LabelMatchers>>, container!=""}) by (<<.GroupBy>>)
+#     nodeQuery: sum(container_memory_working_set_bytes{<<.LabelMatchers>>,id='/'}) by (<<.GroupBy>>)
+#     resources:
+#       overrides:
+#         node:
+#           resource: node
+#         namespace:
+#           resource: namespace
+#         pod:
+#           resource: pod
+#     containerLabel: container
+#   window: 3m
