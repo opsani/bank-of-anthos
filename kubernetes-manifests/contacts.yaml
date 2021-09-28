@@ -22,6 +22,7 @@ spec:
       app: contacts
   template:
     metadata:
+      annotations: {}
       labels:
         app: contacts
     spec:
@@ -58,11 +59,11 @@ spec:
             name: appd-config
         resources:
           requests:
-            cpu: 1000m
-            memory: 1Gi
+            cpu: 500m
+            memory: 0.5Gi
           limits:
-            cpu: 1000m
-            memory: 1Gi
+            cpu: 500m
+            memory: 0.5Gi
         readinessProbe:
           httpGet:
             path: /ready

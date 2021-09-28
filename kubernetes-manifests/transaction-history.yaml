@@ -22,7 +22,7 @@ spec:
       app: transactionhistory
   template:
     metadata:
-      name: transactionhistory
+      annotations: {}
       labels:
         app: transactionhistory
     spec:
@@ -126,11 +126,11 @@ spec:
             name: ledger-db-config
         resources:
           requests:
-            cpu: 1000m
-            memory: 1Gi
+            cpu: 750m
+            memory: 1.5Gi
           limits:
-            cpu: 1000m
-            memory: 1Gi
+            cpu: 750m
+            memory: 1.5Gi
         readinessProbe:
           httpGet:
             path: /ready
