@@ -34,7 +34,7 @@ The Python components (contacts, frontend and userservice) utilize the [AppDynam
 4. An override entrypoint to that preprends 'pyagent run' to the gunicorn command based on the predefined entrypoint in the /src/*/Dockerfile
 
 The `config.yaml` is the only file required to be modified with AppDynamics-specific parameters. General variables are stored in the "appd-config" ConfigMap, where `APPDYNAMICS_AGENT_APPLICATION_NAME` has to be set and all others will run with the default options.
-AppDynamics credentials are stored in "appd-secrets", and require the base-64 encoded username, account name, controller host name, password and access key. 
+AppDynamics credentials are stored in "appd-secrets", and require the  username, account name, controller host name, password and access key. 
 
 ## QUICKSTART
 
