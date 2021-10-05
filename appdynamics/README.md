@@ -147,10 +147,12 @@ The cluster agent allows for high-level insights into the underlying K8s behavio
 - service endpoints in a failed state
 - missing dependencies (Services, configMaps, Secrets)
 
-To install the CA, update the `cluster-agent/cluster-agent.yaml` with the target appName, controllerUrl and account, then apply it along with the CA operator (Note: this is not deployed in the automatic `deploy.sh` script).
+To install the CA per [documentation here](https://docs.appdynamics.com/21.1/en/infrastructure-visibility/monitor-kubernetes-with-the-cluster-agent/install-the-cluster-agent/install-the-cluster-agent-with-the-kubernetes-cli), update the `cluster-agent/cluster-agent.yaml` with the target appName, controllerUrl and account, then apply it along with the CA operator (Note: this is not deployed in the automatic `deploy.sh` script).
 
 ```sh
-kubectl -n ${NAMESPACE} apply -f ../appdynamics/cluster-agent/ 
+kubectl create namespace appdynamics
+kubectl create -f cluster-agent/cluster-agent-operator.yaml
+kubectl create -f cluster-agent/cluster-agent.yaml 
 ```
 
 ## Uninstall Bank-of-Anthos
