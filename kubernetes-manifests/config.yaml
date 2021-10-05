@@ -58,13 +58,13 @@ data:
   RETRY: 10s
   TIMEOUT: 300s
 ---
-# Base64 encoded AppD credentials to be passed to the ServoX connector
+# AppD credentials to be passed to the ServoX connector and AppD agents
 apiVersion: v1
 kind: Secret
 metadata:
   name: appd-secrets
 type: Opaque
-data:
+stringData:
   username: ""
   accountname: ""
   hostname: ""
