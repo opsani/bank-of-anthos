@@ -4,13 +4,13 @@
 
 [AppDynamics](https://www.appdynamics.com/) is an application performance management platform that allows for robust metric gathering and control of deployments.
 
-This repo is built to serve the necessary components to instrument Bank of Anthos with AppDynamics agents.
+This is a modified version built to serve the necessary components to instrument Bank of Anthos with AppDynamics agents.
 
-## Prerequistes and Components
+## Prerequisites and Components
 
 1. `kubectl` cli command version appropriate to your cluster
 2. bash command line interpreter (to run the deployment scripts)
-3. target kubernetes cluster with at least **8** AWS m5.xl equivalent nodes avaialble exclusively for this test
+3. target kubernetes cluster with at least **8** AWS m5.xl equivalent nodes available exclusively for this test
 4. ability to create a namespace, or define a namespace in the NAMESPACE environment variable for Bank of Anthos
 5. ability to create the metrics-service (or already have it installed) in the kube-systems administrative namespace
 6. an AppDynamics account with sufficient licenses for all services (alternatively, selectively use the non-instrumented images for certain services accordingly), as well as proper allocation of these licenses under rules
@@ -43,6 +43,10 @@ Populate the `/kubernetes-manifests/config.yaml` and run the `/appdynamics/deplo
 ```sh
 cd appdynamics && ./deploy.sh
 ```
+
+For more detailed information including guides and demonstration videos, navigate 
+to our [joint solution demo page](https://opsani.com/partners/appdynamics/), or
+right to a sample application ready to be deployed [here](https://github.com/opsani/bank-of-anthos/tree/feature/appdynamics/appdynamics).
 
 ## Install Bank of Anthos (Manually)
 
@@ -152,6 +156,7 @@ To install the CA per [documentation here](https://docs.appdynamics.com/21.1/en/
 ```sh
 kubectl create namespace appdynamics
 kubectl create -f cluster-agent/cluster-agent-operator.yaml
+kubectl -n appdynamics create secret generic cluster-agent-secret --from-literal=controller-key=<access-key> --from-literal=api-user="<username>@<customer>:<password>"
 kubectl create -f cluster-agent/cluster-agent.yaml 
 ```
 
