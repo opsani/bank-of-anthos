@@ -82,6 +82,6 @@ else
   echo "Bank-of-Anthos was installed in ${NAMESPACE}"
   echo "You can try to port-forward to the frontend service with"
   echo "kubectl port-forward -n ${NAMESPACE} svc/frontend 8080:http &"
-  echo "and point a web browser to http://localhost:8080/"
+  echo "and point a web browser to http://localhost:9980/"
   echo "the default user and password are 'testuser' and 'password'"
 fi
