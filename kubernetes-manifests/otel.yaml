@@ -1,34 +1,54 @@
 apiVersion: opentelemetry.io/v1alpha1
 kind: Instrumentation
 metadata:
-  name: auto-instrumentation
+  name: splunk-auto-instrumentation
 spec:
   exporter:
-    endpoint: http://appdynamics-otel-collector-service.appdynamics.svc.cluster.local:4317
+    endpoint: http://$(SPLUNK_OTEL_AGENT):4317
   propagators:
     - tracecontext
     - baggage
     - b3
   env:
-    - name: OTEL_EXPORTER_OTLP_INSECURE
+    - name: SPLUNK_PROFILER_ENABLED
       value: "true"
-    - name: OTEL_LOG_LEVEL
-      value: "debug"
-    - name: OTEL_TRACES_EXPORTER
-      value: "otlp,logging"
+    - name: SPLUNK_PROFILER_MEMORY_ENABLED
+      value: "true"
+    - name: SPLUNK_OTEL_AGENT
+      valueFrom:
+        fieldRef:
+          apiVersion: v1
+          fieldPath: status.hostIP
   python:
-    image: ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-python:0.28b1
     env:
-      - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
-        value: "http://appdynamics-otel-collector-service.appdynamics.svc.cluster.local:4318/v1/traces"
+      - name: OTEL_RESOURCE_ATTRIBUTES
+        value: splunk.zc.method=autoinstrumentation-python:0.28b1
       - name: OTEL_TRACES_EXPORTER
         value: otlp_proto_http
-      - name: OTEL_PYTHON_LOG_LEVEL
-        value: "debug"
+      - name: SPLUNK_OTEL_AGENT
+        valueFrom:
+          fieldRef:
+            apiVersion: v1
+            fieldPath: status.hostIP
+      - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+        value: http://$(SPLUNK_OTEL_AGENT):4318/v1/traces
+    image: ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-python:0.28b1
+    resourceRequirements:
+      limits:
+        cpu: 500m
+        memory: 32Mi
+      requests:
+        cpu: 50m
+        memory: 32Mi
   java:
-    image: ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-java:latest
     env:
-      - name: OTEL_EXPORTER_OTLP_ENDPOINT
-        value: "http://appdynamics-otel-collector-service.appdynamics.svc.cluster.local:4317"
-      - name: OTEL_JAVAAGENT_DEBUG
-        value: "true"
+      - name: OTEL_RESOURCE_ATTRIBUTES
+        value: splunk.zc.method=splunk-otel-java:v1.32.0
+    image: ghcr.io/signalfx/splunk-otel-java/splunk-otel-java:v1.32.0
+    resources:
+      limits:
+        cpu: 500m
+        memory: 64Mi
+      requests:
+        cpu: 50m
+        memory: 64Mi
